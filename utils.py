@@ -31,7 +31,7 @@ def load_model(checkpoint: str, cuda=False, config=None):
     
     return model
 
-def predict(model, val_dataloader, device='cpu'):
+def predict_cell(model, val_dataloader, device='cpu'):
     ## Validation
     model.eval()
     results = {
@@ -49,14 +49,40 @@ def predict(model, val_dataloader, device='cpu'):
         
         outputs = outputs.detach().cpu().numpy()
         pred_list = np.argmax(outputs, axis=1)
-
-        results['coordinates'].append(coordinates)
+        coordinates_list = [(x, y) for x, y in zip(coordinates[0], coordinates[1])]
+        results['coordinates'].append(coordinates_list)
         results['label'].append(pred_list)
     
     return results
 
+def predict_survival(model, val_dataloader, device='cpu'):
+    ## Validation
+
+    model.eval()
+
+    results = {
+        'coordinates': [],
+        'risk_score': []
+    }
+
+    for batch_dict in stqdm(val_dataloader):
+        inputs = batch_dict['image'].to(device)
+        coordinates = batch_dict['coordinates']
+        # forward
+        with torch.no_grad():
+            outputs, _ = model.forward(inputs)
+
+        output_list = outputs.detach().cpu().numpy()
+        output_list = np.concatenate(output_list, axis=0)
+        coordinates_list = [(x, y) for x, y in zip(coordinates[0], coordinates[1])]
+        results['coordinates'].append(coordinates_list)
+        results['risk_score'].append(output_list)
+    
+    return results
+
+
 def read_patches(slide):
-    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=np.inf)
+    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=100)
     data_transforms = transforms.Compose([
         transforms.Resize(46),
         transforms.Resize(224),
@@ -67,7 +93,7 @@ def read_patches(slide):
     image_samplers = SequentialSampler(dataset)
     
     # Create training and validation dataloaders
-    dataloader = DataLoader(dataset, batch_size=1, sampler=image_samplers)
+    dataloader = DataLoader(dataset, batch_size=64, sampler=image_samplers)
 
     return dataloader
 

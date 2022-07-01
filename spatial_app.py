@@ -5,10 +5,11 @@ from streamlit_drawable_canvas import st_canvas
 import cv2
 from openslide import OpenSlide
 import os
+from heatmap_survival import generate_heatpmap_survival
 
 from utils import *
 from spa_mapping import generate_heatmap
-
+from heatmap_survival import generate_heatpmap_survival
 # Some easy style stolen from internet...
 st.set_page_config(layout="wide")
 st.markdown("""
@@ -53,7 +54,7 @@ config = {
   "compress_factor": 16
 }
 # Specify canvas parameters in application
-bg_image = st.sidebar.file_uploader("Image:", type=["png", "jpg", "svs"])
+bg_image = st.sidebar.file_uploader("Image:", type=["tiff","svs"])
 # TODO max width / height
 #model_type = st.sidebar.selectbox("Model:", ("ResUNet", "ResUNet2", "Combined_1_2"))
 #stroke_color = st.sidebar.color_picker("Box border color: ")
@@ -69,6 +70,8 @@ if bg_image:
     slide = OpenSlide(path)
     image = slide.get_thumbnail(size=(512,512))
     st.image(image)
+    with st.spinner('Reading patches...'):
+        dataloader = read_patches(slide)
     bg_image = None
 else:
     st.markdown('<p class="big-font">Choose an image first</p>', unsafe_allow_html=True)
@@ -78,14 +81,12 @@ else:
 
 
 if cell_type_button:
+    config['num_classes'] = 6
     with st.spinner('Loading model...'):
         model = load_model(checkpoint='model_cell.pt', config = config)
-    
-    with st.spinner('Reading patches...'):
-        dataloader = read_patches(slide)
-    
+     
     with st.spinner('Predicting cell types...'):
-        results = predict(model, dataloader)
+        results = predict_cell(model, dataloader)
     
     config['label_column'] = 'label'
     with st.spinner('Generating visualizations...'):
@@ -94,7 +95,18 @@ if cell_type_button:
     st.image(heatmap, caption='Cell distribution accross the tissue')
 
 if prognosis_button:
-    print('u')
+    config['num_classes'] = 1
+    with st.spinner('Loading model...'):
+        model = load_model(checkpoint='model_survival.pt', config = config)
+    
+    with st.spinner('Predicting survival...'):
+        results = predict_survival(model, dataloader)
+
+    config['label_column'] = 'risk_score'
+    with st.spinner('Generating visualizations...'):
+        heatmap, histo = generate_heatpmap_survival(slide, patch_size= (112,112), results=results)
+
+    st.image(heatmap, caption='Survival prediction accross the tissue')
 
 if clear_button:
     clear(path)

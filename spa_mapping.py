@@ -11,6 +11,7 @@ from openslide import OpenSlide
 import json
 from multiprocessing import Pool, Value, Lock
 import seaborn as sns
+from stqdm import stqdm
 
 def assig_to_heatmap(heatmap, patch, x, y, ratio_patch_x, ratio_patch_y,xmax, ymax):
     new_x = int(x / ratio_patch_x)
@@ -66,7 +67,9 @@ def make_dict(labels, config):
     values = labels[config['label_column']]
     keys = np.concatenate((keys), axis=0)
     values = np.concatenate((values), axis=0)
-    cell_labels = dict(zip(keys, values))
+    cell_labels = dict()
+    for key, value in zip(keys, values):
+        cell_labels[tuple(key)] = value
     return cell_labels
 
 def generate_heatmap(slide, patch_size: Tuple, labels, config):
@@ -80,8 +83,7 @@ def generate_heatmap(slide, patch_size: Tuple, labels, config):
     histo = np.zeros((xmax // compress_factor, ymax // compress_factor, 3))
 
     labels_dict = make_dict(labels, config)
-
-    for x, y in indices:
+    for x, y in stqdm(indices):
         try:
             patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
             if (x, y) in labels_dict:
