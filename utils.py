@@ -82,7 +82,7 @@ def predict_survival(model, val_dataloader, device='cpu'):
 
 
 def read_patches(slide):
-    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=100)
+    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=np.inf)
     data_transforms = transforms.Compose([
         transforms.Resize(46),
         transforms.Resize(224),

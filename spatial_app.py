@@ -6,6 +6,7 @@ import cv2
 from openslide import OpenSlide
 import os
 from heatmap_survival import generate_heatpmap_survival
+from PIL import Image
 
 from utils import *
 from spa_mapping import generate_heatmap
@@ -70,8 +71,6 @@ if bg_image:
     slide = OpenSlide(path)
     image = slide.get_thumbnail(size=(512,512))
     st.image(image)
-    with st.spinner('Reading patches...'):
-        dataloader = read_patches(slide)
     bg_image = None
 else:
     st.markdown('<p class="big-font">Choose an image first</p>', unsafe_allow_html=True)
@@ -81,6 +80,9 @@ else:
 
 
 if cell_type_button:
+    with st.spinner('Reading patches...'):
+        dataloader = read_patches(slide)
+
     config['num_classes'] = 6
     with st.spinner('Loading model...'):
         model = load_model(checkpoint='model_cell.pt', config = config)
@@ -90,11 +92,16 @@ if cell_type_button:
     
     config['label_column'] = 'label'
     with st.spinner('Generating visualizations...'):
-        heatmap, histo = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
+        heatmap = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
 
-    st.image(heatmap, caption='Cell distribution accross the tissue')
+    im = Image.fromarray(heatmap)
+    im = im.resize((512,512))
+    st.image(im, caption='Cell distribution accross the tissue')
 
 if prognosis_button:
+    with st.spinner('Reading patches...'):
+        dataloader = read_patches(slide)
+
     config['num_classes'] = 1
     with st.spinner('Loading model...'):
         model = load_model(checkpoint='model_survival.pt', config = config)
@@ -104,9 +111,11 @@ if prognosis_button:
 
     config['label_column'] = 'risk_score'
     with st.spinner('Generating visualizations...'):
-        heatmap, histo = generate_heatpmap_survival(slide, patch_size= (112,112), results=results)
+        heatmap = generate_heatpmap_survival(slide, patch_size= (112,112), results=results)
 
-    st.image(heatmap, caption='Survival prediction accross the tissue')
+    im = Image.fromarray(heatmap)
+    im = im.resize((512,512))
+    st.image(im, caption='Survival prediction accross the tissue')
 
 if clear_button:
     clear(path)

@@ -12,6 +12,8 @@ from skimage.filters import threshold_otsu
 from scipy.ndimage.morphology import binary_dilation, binary_erosion
 import json
 from stqdm import stqdm
+import matplotlib.pyplot as plt
+
 from get_patch_img import get_mask
 
 
@@ -112,7 +114,6 @@ def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=
     indices, xmax_patch, ymax_patch, patch_size_resized = get_indices(slide, patch_size)
     
     heatmap = np.zeros((xmax_patch, ymax_patch, 3))
-    histo = np.zeros((xmax_patch, ymax_patch, 3))
 
     PATCH_LEVEL = 0
 
@@ -130,7 +131,6 @@ def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=
             try:
                 heatmap = assig_to_heatmap(heatmap, patch, x, y)                           
             except:
-                continue
-        histo = assig_to_heatmap(histo, patch, x, y)   
-                            
-    return heatmap, histo
+                continue 
+    heatmap = np.transpose(heatmap, axes=[1, 0, 2]).astype(np.uint8)
+    return heatmap

@@ -12,6 +12,7 @@ import json
 from multiprocessing import Pool, Value, Lock
 import seaborn as sns
 from stqdm import stqdm
+import matplotlib.pyplot as plt
 
 def assig_to_heatmap(heatmap, patch, x, y, ratio_patch_x, ratio_patch_y,xmax, ymax):
     new_x = int(x / ratio_patch_x)
@@ -94,12 +95,10 @@ def generate_heatmap(slide, patch_size: Tuple, labels, config):
                 heatmap = assig_to_heatmap(heatmap, visualization, x, y, compress_factor, compress_factor, xmax, ymax)              
             else:
                 heatmap = assig_to_heatmap(heatmap, patch, x, y, compress_factor, compress_factor, xmax, ymax)                           
-            histo = assig_to_heatmap(histo, patch, x, y, compress_factor, compress_factor, xmax, ymax)   
         except Exception as e:
             print(e)
     
     # since the x and y coordiante is flipped after converting the patch to RGB, we flipped the image again to match the origianl image
     heatmap = np.transpose(heatmap, axes=[1, 0, 2]).astype(np.uint8)
-    histo = np.transpose(histo, axes=[1,0,2]).astype(np.uint8)
 
-    return heatmap, histo
+    return heatmap
