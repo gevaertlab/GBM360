@@ -63,15 +63,38 @@ def get_color_linear(minimum, maximum, value):
     g = 255 - b - r
     return r, g, b
 
+
 def make_dict(labels, config):
     keys = labels['coordinates']
-    values = labels[config['label_column']]
+    labels = labels[config['label_column']]
     keys = np.concatenate((keys), axis=0)
-    values = np.concatenate((values), axis=0)
-    cell_labels = dict()
-    for key, value in zip(keys, values):
-        cell_labels[tuple(key)] = value
-    return cell_labels
+    labels = np.concatenate((labels), axis=0)
+    # convert predicted labels to actual cell types
+    class2idx = {
+        'Normal' : 0,
+        'NPC-like' : 1,
+        'OPC-like' : 2,
+        'Immune' : 3,
+        'Hypoxia': 4,
+        'Mesenchymal': 5
+    }
+    id2class = {v: k for k, v in class2idx.items()}   
+    cell_types = [id2class[k] for k in labels]
+    # Match cell types to colors
+    color_ids = {
+        'Normal' : 1,
+        'NPC-like' : 0,
+        'OPC-like' : 3,
+        'Immune' : 2,
+        'Hypoxia': 4,
+        'MES': 5
+    }
+    colors = [color_ids[k] for k in cell_types]
+
+    color_labels = dict()
+    for key, value in zip(keys, colors):
+        color_labels[tuple(key)] = value
+    return color_labels
 
 def generate_heatmap(slide, patch_size: Tuple, labels, config):
     PATCH_LEVEL = 0

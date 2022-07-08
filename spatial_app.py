@@ -32,9 +32,7 @@ config = {
   "batch_size": 128,
   "use_cuda":True,
   "data_path": "/oak/stanford/groups/ogevaert/data/Spatial_Heiland/data/patches_spot",
-  "train_csv_path": "/oak/stanford/groups/ogevaert/data/Spatial_Heiland/data/classify/train_val_test_hold/train.csv",
-  "val_csv_path": "/oak/stanford/groups/ogevaert/data/Spatial_Heiland/data/classify/train_val_test_hold/val.csv",
-  "test_csv_path": "/oak/stanford/groups/ogevaert/data/Spatial_Heiland/data/classify/train_val_test_hold/test.csv",
+  'label_column' : 'label',
   "num_workers": 20,
   "num_epochs": 10,
   "img_size": 46,
@@ -54,6 +52,7 @@ config = {
   "restore_path": "",
   "compress_factor": 16
 }
+
 # Specify canvas parameters in application
 bg_image = st.sidebar.file_uploader("Image:", type=["tiff","svs"])
 # TODO max width / height
@@ -83,14 +82,12 @@ if cell_type_button:
     with st.spinner('Reading patches...'):
         dataloader = read_patches(slide)
 
-    config['num_classes'] = 6
     with st.spinner('Loading model...'):
         model = load_model(checkpoint='model_cell.pt', config = config)
      
     with st.spinner('Predicting cell types...'):
         results = predict_cell(model, dataloader)
     
-    config['label_column'] = 'label'
     with st.spinner('Generating visualizations...'):
         heatmap = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
 

@@ -1,1 +1,4 @@
 *.jpg
+*.pt
+__pycache__/*
+temp/*
