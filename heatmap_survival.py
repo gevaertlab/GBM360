@@ -17,33 +17,28 @@ import matplotlib.pyplot as plt
 from get_patch_img import get_mask
 
 
-def assig_to_heatmap_old(heatmap, patch, x, y, ratio_patch_x, ratio_patch_y,xmax, ymax):
+def assig_to_heatmap(heatmap, patch, x, y, ratio_patch_x, ratio_patch_y,xmax, ymax):
     new_x = int(x / ratio_patch_x)
     new_y = int(y / ratio_patch_y)
+    
     try:
         if new_x+patch.shape[0] > heatmap.shape[0] and new_y+patch.shape[1] < heatmap.shape[1]:
-            #print("case1")
             dif = new_x+patch.shape[0] - xmax
             dif = patch.shape[0] - dif
             heatmap[new_x:, new_y:new_y+patch.shape[1], :] = patch[:dif, :, :]
         elif new_x+patch.shape[0] < heatmap.shape[0] and new_y+patch.shape[1] > heatmap.shape[1]:
-            #print("case2")
             dif = new_y+patch.shape[1] - ymax
             dif = patch.shape[1] - dif
             heatmap[new_x:new_x+patch.shape[0], new_y:, :] = patch[:, :dif, :]
         elif new_x+patch.shape[0] > heatmap.shape[0] and new_y+patch.shape[1] > heatmap.shape[1]:
-            #print("case3")
             return heatmap
         else:
-            #print("case4")
             heatmap[new_x:new_x+patch.shape[0], new_y:new_y+patch.shape[1], :] = patch
+    
         return heatmap
     except:
         return heatmap
 
-def assig_to_heatmap(heatmap, patch, x, y):
-    heatmap[x:x+patch.shape[0], y:y+patch.shape[1], :] = patch
-    return heatmap
 
 def get_indices(slide : OpenSlide, patch_size: Tuple, dezoom_factor=1.0):
  
@@ -108,28 +103,30 @@ def make_dict(labels):
             survival_labels[k] = v
     return survival_labels
 
-def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=-2, max_val=2.34, resize_factor=1):
-            
-    indices, xmax_patch, ymax_patch, patch_size_resized = get_indices(slide, patch_size)
-    
-    heatmap = np.zeros((xmax_patch, ymax_patch, 3))
-
+def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=-2, max_val=2.34, compress_factor = 16):
     PATCH_LEVEL = 0
-    results = make_dict(results)
-    #pdb.set_trace()
+    
+    indices, xmax, ymax, patch_size_resized = get_indices(slide, patch_size)
+    compress_factor = compress_factor
+
+    heatmap = np.zeros((xmax // compress_factor, ymax // compress_factor, 3))
+
+    labels_dict = make_dict(results)
     for x, y in stqdm(indices):
-        patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
-        #patch = patch.resize((224,224))
-        if (x, y) in results:
-            score = results[(x,y)]
-            color = get_color_linear(min_val, max_val, score)
-            visualization = np.empty((patch_size[0],patch_size[1],3), np.uint8)
-            visualization[:] = color[0], color[1], color[2]
-            heatmap = assig_to_heatmap(heatmap, visualization, x, y)              
-        else:
-            try:
-                heatmap = assig_to_heatmap(heatmap, patch, x, y)                           
-            except:
-                continue 
+        try:
+            patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
+            if (x, y) in labels_dict:
+                score = labels_dict[(x,y)]
+                color = get_color_linear(min_val, max_val, score)
+                visualization = np.empty((patch_size[0], patch_size[1], 3), np.uint8)
+                visualization[:] = color[0] * 255, color[1] * 255, color[2] * 255
+                heatmap = assig_to_heatmap(heatmap, visualization, x, y, compress_factor, compress_factor, xmax, ymax)              
+            else:
+                heatmap = assig_to_heatmap(heatmap, patch, x, y, compress_factor, compress_factor, xmax, ymax)                           
+        except Exception as e:
+            print(e)
+    
+    # since the x and y coordiante is flipped after converting the patch to RGB, we flipped the image again to match the origianl image
     heatmap = np.transpose(heatmap, axes=[1, 0, 2]).astype(np.uint8)
+
     return heatmap

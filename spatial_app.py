@@ -107,7 +107,9 @@ if prognosis_button:
 
     config['label_column'] = 'risk_score'
     with st.spinner('Generating visualizations...'):
-        heatmap = generate_heatpmap_survival(slide, patch_size= (112,112), results=results)
+        heatmap = generate_heatpmap_survival(slide, patch_size= (112,112), 
+                                            results=results, 
+                                            compress_factor=config['compress_factor'])
 
     im = Image.fromarray(heatmap)
     st.image(im, caption='Survival prediction accross the tissue')
