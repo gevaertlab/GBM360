@@ -95,7 +95,6 @@ if cell_type_button:
         heatmap = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
 
     im = Image.fromarray(heatmap)
-    im = im.resize((512,512))
     st.image(im, caption='Cell distribution accross the tissue')
 
 if prognosis_button:
@@ -114,7 +113,6 @@ if prognosis_button:
         heatmap = generate_heatpmap_survival(slide, patch_size= (112,112), results=results)
 
     im = Image.fromarray(heatmap)
-    im = im.resize((512,512))
     st.image(im, caption='Survival prediction accross the tissue')
 
 if clear_button:

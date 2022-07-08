@@ -74,7 +74,7 @@ def predict_survival(model, val_dataloader, device='cpu'):
 
         output_list = outputs.detach().cpu().numpy()
         output_list = np.concatenate(output_list, axis=0)
-        coordinates_list = [(x, y) for x, y in zip(coordinates[0], coordinates[1])]
+        coordinates_list = [(x.item(), y.item()) for x, y in zip(coordinates[0], coordinates[1])]
         results['coordinates'].append(coordinates_list)
         results['risk_score'].append(output_list)
     

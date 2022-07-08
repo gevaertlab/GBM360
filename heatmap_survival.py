@@ -99,14 +99,13 @@ def get_color_linear(minimum, maximum, value):
     g = 255 - b - r
     return r, g, b
 
-def make_dict(labels, config):
+def make_dict(labels):
     keys = labels['coordinates']
-    values = labels[config['label_column']]
-    keys = np.concatenate((keys), axis=0)
-    values = np.concatenate((values), axis=0)
+    values = labels['risk_score']
     survival_labels = dict()
     for key, value in zip(keys, values):
-        survival_labels[tuple(key)] = value
+        for k, v in zip(key, value):
+            survival_labels[k] = v
     return survival_labels
 
 def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=-2, max_val=2.34, resize_factor=1):
@@ -116,13 +115,13 @@ def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=
     heatmap = np.zeros((xmax_patch, ymax_patch, 3))
 
     PATCH_LEVEL = 0
-
+    results = make_dict(results)
     #pdb.set_trace()
     for x, y in stqdm(indices):
         patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
         #patch = patch.resize((224,224))
-        if (x, y) in list(results['coordinates']):
-            score = results[results['coordinates'] == (x,y)]['risk_score'].item()
+        if (x, y) in results:
+            score = results[(x,y)]
             color = get_color_linear(min_val, max_val, score)
             visualization = np.empty((patch_size[0],patch_size[1],3), np.uint8)
             visualization[:] = color[0], color[1], color[2]
