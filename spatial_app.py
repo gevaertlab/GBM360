@@ -1,3 +1,4 @@
+from turtle import width
 import numpy as np
 from PIL import Image
 import streamlit as st
@@ -92,7 +93,8 @@ if cell_type_button:
         heatmap = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
 
     im = Image.fromarray(heatmap)
-    st.image(im, caption='Cell distribution accross the tissue')
+    legend = Image.open('pictures/cell_type.png')
+    st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
 if prognosis_button:
     with st.spinner('Reading patches...'):
