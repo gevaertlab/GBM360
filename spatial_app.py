@@ -94,7 +94,12 @@ if cell_type_button:
 
     im = Image.fromarray(heatmap)
     legend = Image.open('pictures/cell_type.png')
-    st.image([im, legend], caption=['Cell distribution accross the tissue', None])
+    col1, mid, col2 = st.columns([100,1,20])
+    with col1:
+        st.image(im, caption='Cell distribution accross the tissue')
+    with col2:
+        st.image(legend)
+    #st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
 if prognosis_button:
     with st.spinner('Reading patches...'):
