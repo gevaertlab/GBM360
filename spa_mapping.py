@@ -76,7 +76,7 @@ def make_dict(labels, config):
         'OPC-like' : 2,
         'Immune' : 3,
         'Hypoxia': 4,
-        'Mesenchymal': 5
+        'MES': 5
     }
     id2class = {v: k for k, v in class2idx.items()}   
     cell_types = [id2class[k] for k in labels]
@@ -96,6 +96,35 @@ def make_dict(labels, config):
         color_labels[tuple(key)] = value
     return color_labels
 
+def compute_percentage(labels, config):
+    labels = labels[config['label_column']]
+    labels = np.concatenate((labels), axis=0)
+    # convert predicted labels to actual cell types
+    class2idx = {
+        'Normal' : 0,
+        'NPC-like' : 1,
+        'OPC-like' : 2,
+        'Immune' : 3,
+        'Hypoxia': 4,
+        'MES': 5
+    }
+    id2class = {v: k for k, v in class2idx.items()}   
+    cell_types = [id2class[k] for k in labels]
+    total = len(cell_types)
+    percentages = {
+        'Normal' : 0.0,
+        'NPC-like' : 0.0,
+        'OPC-like' : 0.0,
+        'Immune' : 0.0,
+        'Hypoxia': 0.0,
+        'MES': 0
+    }
+    for cell_type in percentages.keys():
+        count = cell_types.count(cell_type)
+        percentages[cell_type] = float(count/total) * 100
+    
+    return percentages
+
 def generate_heatmap(slide, patch_size: Tuple, labels, config):
     PATCH_LEVEL = 0
     
@@ -107,6 +136,7 @@ def generate_heatmap(slide, patch_size: Tuple, labels, config):
     histo = np.zeros((xmax // compress_factor, ymax // compress_factor, 3))
 
     labels_dict = make_dict(labels, config)
+    percentages = compute_percentage(labels, config)
     for x, y in stqdm(indices):
         try:
             patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
@@ -124,4 +154,4 @@ def generate_heatmap(slide, patch_size: Tuple, labels, config):
     # since the x and y coordiante is flipped after converting the patch to RGB, we flipped the image again to match the origianl image
     heatmap = np.transpose(heatmap, axes=[1, 0, 2]).astype(np.uint8)
 
-    return heatmap
+    return heatmap, percentages

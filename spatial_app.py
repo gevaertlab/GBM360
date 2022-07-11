@@ -8,6 +8,7 @@ from openslide import OpenSlide
 import os
 from heatmap_survival import generate_heatpmap_survival
 from PIL import Image
+import pandas as pd
 
 from utils import *
 from spa_mapping import generate_heatmap
@@ -90,7 +91,7 @@ if cell_type_button:
         results = predict_cell(model, dataloader)
     
     with st.spinner('Generating visualizations...'):
-        heatmap = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
+        heatmap, percentages = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
 
     im = Image.fromarray(heatmap)
     legend = Image.open('pictures/cell_type.png')
@@ -99,6 +100,10 @@ if cell_type_button:
         st.image(im, caption='Cell distribution accross the tissue')
     with col2:
         st.image(legend)
+    
+    st.markdown('<p class="big-font">Percentage of each cell type in the slide</p>', unsafe_allow_html=True)
+    df = pd.DataFrame([percentages])
+    st.table(df)
     #st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
 if prognosis_button:
