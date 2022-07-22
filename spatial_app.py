@@ -57,13 +57,18 @@ config = {
 
 # Specify canvas parameters in application
 bg_image = st.sidebar.file_uploader("Image:", type=["tiff","svs"])
+
 # TODO max width / height
-#model_type = st.sidebar.selectbox("Model:", ("ResUNet", "ResUNet2", "Combined_1_2"))
 #stroke_color = st.sidebar.color_picker("Box border color: ")
 stroke_color = "#000"
+test_mode = st.sidebar.selectbox("Test mode (only 100 patches will be predicted):", ("False", "True"))
 cell_type_button = st.sidebar.button("Get cell type visualization")
 prognosis_button = st.sidebar.button("Get prognosis visualization")
 clear_button = st.sidebar.button("Clear the session")
+
+device = check_device(config['use_cuda'])
+with st.sidebar:
+    st.write('Device available:', device)
 
 # Create a canvas component
 canvas_result = None
@@ -79,16 +84,19 @@ else:
 # https://stackoverflow.com/questions/66372402/conversion-of-dimension-of-streamlit-canvas-image
 # https://github.com/andfanilo/streamlit-drawable-canvas/issues/39
 
+max_patches_per_slide = np.inf
+if test_mode == "True":
+    max_patches_per_slide = 100
 
 if cell_type_button:
     with st.spinner('Reading patches...'):
-        dataloader = read_patches(slide)
+        dataloader = read_patches(slide, max_patches_per_slide)
 
     with st.spinner('Loading model...'):
         model = load_model(checkpoint='model_cell.pt', config = config)
      
     with st.spinner('Predicting cell types...'):
-        results = predict_cell(model, dataloader)
+        results = predict_cell(model, dataloader, device=device)
     
     with st.spinner('Generating visualizations...'):
         heatmap, percentages = generate_heatmap(slide, patch_size= (112,112), labels=results, config=config)
@@ -101,10 +109,24 @@ if cell_type_button:
     with col2:
         st.image(legend)
     
+    # Display statistic tables for cell proportions 
     st.markdown('<p class="big-font">Percentage of each cell type in the slide</p>', unsafe_allow_html=True)
     df = pd.DataFrame([percentages])
     df = df.T
     df.columns = ['Percentage (%)']
+    df['Cell type'] = df.index
+    df = df[['Cell type', "Percentage (%)"]]
+    df = df.reset_index(drop = True)
+
+    # CSS to inject contained in a string
+    hide_table_row_index = """
+            <style>
+            thead tr th:first-child {display:none}
+            tbody th {display:none}
+            </style>
+            """
+    # Inject CSS with Markdown
+    st.markdown(hide_table_row_index, unsafe_allow_html=True)
     st.table(df)
     #st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
@@ -117,7 +139,7 @@ if prognosis_button:
         model = load_model(checkpoint='model_survival.pt', config = config)
     
     with st.spinner('Predicting survival...'):
-        results = predict_survival(model, dataloader)
+        results = predict_survival(model, dataloader, device=device)
 
     config['label_column'] = 'risk_score'
     with st.spinner('Generating visualizations...'):

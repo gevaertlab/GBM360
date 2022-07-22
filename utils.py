@@ -13,7 +13,16 @@ from pathology_models import AggregationModel, Identity, TanhAttention
 from get_patch_img import extract_patches
 from dataset import PatchDataset
 
-def load_model(checkpoint: str, cuda=False, config=None):
+def check_device(use_GPU):
+    device = 'cpu'
+    if use_GPU:
+        if torch.backends.mps.is_available() and torch.backends.mps.is_built():
+            device = 'mps'
+        elif torch.cuda.is_available():
+            device = 'cuda'
+    return device
+
+def load_model(checkpoint: str, config=None):
     resnet = resnet50(pretrained=config['pretrained'])
     aggregator = None
     if config['aggregator']== 'identity':
@@ -26,12 +35,14 @@ def load_model(checkpoint: str, cuda=False, config=None):
     
     model.load_state_dict(torch.load(checkpoint, map_location=torch.device('cpu')))
 
-    if cuda:
-        model = model.cuda()
+    # if cuda:
+    #     model = model.cuda()
     
     return model
 
 def predict_cell(model, val_dataloader, device='cpu'):
+    
+    model.to(torch.device(device))
     ## Validation
     model.eval()
     results = {
@@ -55,6 +66,8 @@ def predict_cell(model, val_dataloader, device='cpu'):
     return results
 
 def predict_survival(model, val_dataloader, device='cpu'):
+
+    model.to(torch.device(device))
     ## Validation
 
     model.eval()
@@ -80,8 +93,8 @@ def predict_survival(model, val_dataloader, device='cpu'):
     return results
 
 
-def read_patches(slide):
-    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=np.inf)
+def read_patches(slide, max_patches_per_slide = np.inf):
+    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=max_patches_per_slide)
     data_transforms = transforms.Compose([
         transforms.Resize(46),
         transforms.Resize(224),
