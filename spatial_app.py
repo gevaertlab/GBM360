@@ -103,6 +103,8 @@ if cell_type_button:
     
     st.markdown('<p class="big-font">Percentage of each cell type in the slide</p>', unsafe_allow_html=True)
     df = pd.DataFrame([percentages])
+    df = df.T
+    df.columns = ['Percentage (%)']
     st.table(df)
     #st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
