@@ -127,7 +127,19 @@ if cell_type_button:
             """
     # Inject CSS with Markdown
     st.markdown(hide_table_row_index, unsafe_allow_html=True)
-    st.table(df)
+    html_string = '''
+    <html>
+    <link rel="stylesheet" type="text/css" href=""/>
+    <body>
+        {table}
+    </body>
+    </html>
+    '''
+    table_html = df.style.set_properties(
+    subset=['Cell type'], 
+    **{'font-weight': 'bold', 'text-align': 'center'}).render()
+    #st.table(df)
+    st.write(html_string.format(table=table_html), unsafe_allow_html=True)
     #st.image([im, legend], caption=['Cell distribution accross the tissue', None])
 
 if prognosis_button:
