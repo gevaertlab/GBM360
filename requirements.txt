@@ -1,0 +1,16 @@
+numpy
+pandas
+Pillow
+streamlit
+streamlit-authenticator
+streamlit-drawable-canvas
+openslide-python
+PyYAML
+scikit-image
+stqdm
+matplotlib
+scipy
+torch
+seaborn
+glob2
+torchvision 

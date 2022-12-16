@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
 from openslide import OpenSlide
-from multiprocessing import Pool, Value, Lock
 import os
-from IPython.display import display
 import matplotlib.pyplot as plt
 from skimage.color import rgb2hsv
 from skimage.filters import threshold_otsu

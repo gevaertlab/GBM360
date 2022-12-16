@@ -1,0 +1,21 @@
+cookie:
+  expiry_days: 0
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    eric:
+      email: abc@gmail.com
+      name: eric
+      password: $2b$12$KtpmJwOu69MnCcATeSeSzenUvxOJBjhfuL5.FUrhCY7OyaqdPWXZS
+    eric123:
+      email: '123'
+      name: eric123
+      password: $2b$12$SLstsGR4m3Fb60HENjumpe3Mskb9kniQG1u3SvUS5mk1xQslKEPM2
+    hello:
+      email: hello@gmail.com
+      name: eric
+      password: $2b$12$C9CzZAoTbWK0WeFs86yTcObmTAqfKJqeToj.UVslZhnzAyIgKnjDO
+preauthorized:
+  emails:
+  - melsby@gmail.com

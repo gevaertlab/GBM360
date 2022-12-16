@@ -1,9 +1,6 @@
 import os
-import tqdm
-
 import torch
 import numpy as np
-from PIL import Image
 from torchvision import transforms
 from torch.utils.data import DataLoader, SequentialSampler, DataLoader
 from stqdm import stqdm
