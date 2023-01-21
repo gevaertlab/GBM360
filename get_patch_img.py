@@ -61,8 +61,7 @@ def extract_patches(slide, patch_size, max_patches_per_slide=2000, dezoom_factor
 
     indices = [(x, y) for x in range(0, xmax, patch_size_resized[0]) for y in
                 range(0, ymax, patch_size_resized[1])]
-    np.random.seed(5)
-    np.random.shuffle(indices)
+
     patches = []
     coordinates = []
 
@@ -89,6 +88,3 @@ def extract_patches(slide, patch_size, max_patches_per_slide=2000, dezoom_factor
             break
 
     return patches, coordinates
-
-def get_slide_id(slide_name):
-    return slide_name.split('.')[0]+'.'+slide_name.split('.')[1]

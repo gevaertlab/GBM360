@@ -8,6 +8,8 @@ import pandas as pd
 from utils import *
 from spa_mapping import generate_heatmap
 from heatmap_survival import generate_heatpmap_survival
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def app():
 
@@ -19,25 +21,13 @@ def app():
     "num_classes": 6,
     "batch_size": 128,
     "use_cuda":True,
-    "data_path": "/oak/stanford/groups/ogevaert/data/Spatial_Heiland/data/patches_spot",
     'label_column' : 'label',
-    "num_workers": 20,
-    "num_epochs": 10,
+    'pretrained': True,
     "img_size": 46,
-    "lr": 5e-4,
-    "weight_decay": 1e-5,
-    "weighted_sampler": True,
-    "pretrained" : True,
-    "train_bag_size":1,
-    "val_bag_size":1,
-    "aggregator": "identity",
+    'aggregator': 'identity',
     "aggregator_hdim": 2048,
-    "task" : "classification",
-    "n_layers_to_train":2,
-    "flag": "model_pathology",
     "max_patch_per_wsi_train" :100000,
     "max_patch_per_wsi_val" : 100000,
-    "restore_path": "",
     "compress_factor": 16
     }
 
@@ -47,7 +37,7 @@ def app():
     # TODO max width / height
     #stroke_color = st.sidebar.color_picker("Box border color: ")
     stroke_color = "#000"
-    test_mode = st.selectbox("Test mode (only 100 patches will be predicted):", ("False", "True"))
+    test_mode = st.selectbox("Test mode (only 1000 patches will be predicted):", ("True", "False"))
     cell_type_button = st.button("Get cell type visualization")
     prognosis_button = st.button("Get prognosis visualization")
     clear_button = st.button("Clear the session")
@@ -72,7 +62,7 @@ def app():
 
     max_patches_per_slide = np.inf
     if test_mode == "True":
-        max_patches_per_slide = 100
+        max_patches_per_slide = 1000
 
     if cell_type_button:
         with st.spinner('Reading patches...'):
@@ -91,13 +81,8 @@ def app():
         legend = Image.open('pictures/cell-type-hor.png')
         st.image(legend)
         st.image(im, caption='Cell distribution accross the tissue')
-       
-        # col1, mid, col2 = st.columns([100,1,20])
-        # with col1:
-        #     st.image(im, caption='Cell distribution accross the tissue')
-        # with col2:
-        #     st.image(legend)
-        
+
+
         # Display statistic tables for cell proportions 
         st.markdown('<p class="big-font">Percentage of each cell type in the slide</p>', unsafe_allow_html=True)
         df = pd.DataFrame([percentages])
@@ -106,6 +91,10 @@ def app():
         df['Cell type'] = df.index
         df = df[['Cell type', "Percentage (%)"]]
         df = df.reset_index(drop = True)
+
+        # fig = plt.figure(figsize=(1,1))
+        # sns.barplot(data = df, x = "Cell type", y = "Percentage (%)")
+        # st.pyplot(fig)
 
         # CSS to inject contained in a string
         hide_table_row_index = """

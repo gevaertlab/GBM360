@@ -2,7 +2,7 @@ FROM python:3.9-slim
 
 EXPOSE 8502
 
-WORKDIR /GBM360-STREAMLIT
+WORKDIR /GBM360-Lite
 
 RUN apt-get update && apt-get install -y \
     build-essential \

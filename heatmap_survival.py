@@ -13,6 +13,7 @@ import math
 
 from get_patch_img import get_mask
 
+
 def get_matrix_shape(slide : OpenSlide, patch_size: Tuple, cohort = "TCGA"):
     
     PATCH_LEVEL = 0
@@ -106,7 +107,7 @@ def make_dict(labels):
     return survival_labels
 
 def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=-2, max_val=2.34, config = None):
-    
+
     PATCH_LEVEL = 0
     indices, xmax, ymax, patch_size_resized, resize_factor = get_indices(slide, patch_size, PATCH_LEVEL, use_h5 = config['use_h5'])
 
@@ -137,5 +138,5 @@ def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=
     
     # since the x and y coordiante is flipped after converting the patch to RGB, we flipped the image again to match the original image
     heatmap = np.transpose(heatmap, axes=[1, 0, 2]).astype(np.uint8)
-    
+
     return heatmap

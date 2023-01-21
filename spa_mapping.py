@@ -8,6 +8,7 @@ from stqdm import stqdm
 import matplotlib.pyplot as plt
 from PIL import Image
 import math
+import seaborn as sns
 
 def assig_to_heatmap(heatmap, patch, x, y, ratio_patch_x, ratio_patch_y):
 
@@ -66,9 +67,9 @@ def make_dict(labels, config):
         'Normal' : 0,
         'NPC-like' : 1,
         'OPC-like' : 2,
-        'Immune' : 3,
-        'Hypoxia': 4,
-        'MES': 5
+        'RA' : 3,
+        'MES-hypoxia': 4,
+        'MES-like': 5
     }
     id2class = {v: k for k, v in class2idx.items()}   
     cell_types = [id2class[k] for k in labels]
@@ -77,9 +78,9 @@ def make_dict(labels, config):
         'Normal' : 1,
         'NPC-like' : 0,
         'OPC-like' : 3,
-        'Immune' : 2,
-        'Hypoxia': 4,
-        'MES': 5
+        'RA' : 2,
+        'MES-hypoxia': 4,
+        'MES-like': 5
     }
     colors = [color_ids[k] for k in cell_types]
 
@@ -96,9 +97,9 @@ def compute_percentage(labels, config):
         'Normal' : 0,
         'NPC-like' : 1,
         'OPC-like' : 2,
-        'Immune' : 3,
-        'Hypoxia': 4,
-        'MES': 5
+        'RA' : 3,
+        'MES-hypoxia': 4,
+        'MES-like': 5
     }
     id2class = {v: k for k, v in class2idx.items()}   
     cell_types = [id2class[k] for k in labels]
@@ -107,9 +108,9 @@ def compute_percentage(labels, config):
         'Normal' : 0.0,
         'NPC-like' : 0.0,
         'OPC-like' : 0.0,
-        'Immune' : 0.0,
-        'Hypoxia': 0.0,
-        'MES': 0
+        'RA' : 0.0,
+        'MES-hypoxia': 0.0,
+        'MES-like': 0
     }
     for cell_type in percentages.keys():
         count = cell_types.count(cell_type)
@@ -145,7 +146,6 @@ def generate_heatmap(slide, patch_size: Tuple, labels, config):
                 heatmap = assig_to_heatmap(heatmap, visualization, x, y, compress_factor, compress_factor)              
             else:
                 heatmap = assig_to_heatmap(heatmap, patch, x, y, compress_factor, compress_factor)                           
-            histo = assig_to_heatmap(histo, patch, x, y, compress_factor, compress_factor)   
         except Exception as e:
             print(e)
     

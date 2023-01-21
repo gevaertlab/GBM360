@@ -46,11 +46,11 @@ with tab2:
     auth.app()
 
 with tab3:
-    if not st.session_state["authentication_status"]:
-        st.markdown('<p class="big-font">Please log in first.</p>', unsafe_allow_html=True)
-    else:
-        if not os.path.exists('temp'):
-            os.mkdir('temp')
-        main_app.app()
+    # if not st.session_state["authentication_status"]:
+    #     st.markdown('<p class="big-font">Please log in first.</p>', unsafe_allow_html=True)
+    # else:
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+    main_app.app()
         
         
