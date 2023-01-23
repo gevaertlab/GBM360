@@ -1,7 +1,5 @@
 FROM python:3.9-slim
 
-EXPOSE 8502
-
 WORKDIR /GBM360-Lite
 
 RUN apt-get update && apt-get install -y \
@@ -16,4 +14,6 @@ COPY . .
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["streamlit", "run", "spatial_app.py", "--server.maxUploadSize=3072", "--server.port=8502", "--server.address=0.0.0.0"]
+EXPOSE 8501
+
+ENTRYPOINT ["streamlit", "run", "main_app.py", "--server.maxUploadSize=3072", "--server.port=8501", "--server.address=0.0.0.0"]
