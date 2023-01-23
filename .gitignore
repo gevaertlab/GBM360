@@ -3,4 +3,7 @@
 __pycache__/*
 temp/*
 config/*
+Dockerfile
+auth.py
+.DS_Store
 

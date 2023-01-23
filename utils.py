@@ -20,7 +20,7 @@ def check_device(use_GPU):
     return device
 
 def load_model(checkpoint: str, config=None):
-    resnet = resnet50(pretrained=config['pretrained'])
+    resnet = resnet50(pretrained=False)
     aggregator = None
     if config['aggregator']== 'identity':
         aggregator = Identity()
