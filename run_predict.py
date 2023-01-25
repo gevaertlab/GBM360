@@ -122,7 +122,7 @@ def app():
 
     if prognosis_button:
         with st.spinner('Reading patches...'):
-            dataloader = read_patches(slide)
+            dataloader = read_patches(slide, max_patches_per_slide)
 
         config['num_classes'] = 1
         with st.spinner('Loading model...'):
