@@ -6,4 +6,5 @@ config/*
 Dockerfile
 auth.py
 .DS_Store
+example/
 

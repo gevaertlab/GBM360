@@ -14,3 +14,6 @@ torch
 seaborn
 glob2
 torchvision 
+scanpy
+squidpy
+

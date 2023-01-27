@@ -4,11 +4,40 @@ import numpy as np
 from torchvision import transforms
 from torch.utils.data import DataLoader, SequentialSampler, DataLoader
 from stqdm import stqdm
+import seaborn as sns
 
 from resnet import resnet50
 from pathology_models import AggregationModel, Identity, TanhAttention
 from get_patch_img import extract_patches
 from dataset import PatchDataset
+
+import pdb
+
+def get_class():
+    class2idx = {
+        'Normal' : 0,
+        'NPC-like' : 1,
+        'OPC-like' : 2,
+        'Reactive astrocytes' : 3,
+        'MES-hypoxia': 4,
+        'MES-like': 5
+    }
+    id2class = {v: k for k, v in class2idx.items()}  
+    return class2idx, id2class
+
+def get_color_ids():
+    color_ids = {
+        'Normal' : 1,
+        'NPC-like' : 0,
+        'OPC-like' : 3,
+        'Reactive astrocytes' : 2,
+        'MES-hypoxia': 4,
+        'MES-like': 5
+    }
+    clusters_colors = {}
+    for k, v in color_ids.items():
+        clusters_colors[k] = sns.color_palette()[v]
+    return color_ids, clusters_colors
 
 def check_device(use_GPU):
     device = 'cpu'
@@ -31,9 +60,6 @@ def load_model(checkpoint: str, config=None):
                              out_features=config['num_classes'])
     
     model.load_state_dict(torch.load(checkpoint, map_location=torch.device('cpu')))
-
-    # if cuda:
-    #     model = model.cuda()
     
     return model
 
@@ -59,7 +85,7 @@ def predict_cell(model, val_dataloader, device='cpu'):
         coordinates_list = [(x, y) for x, y in zip(coordinates[0], coordinates[1])]
         results['coordinates'].append(coordinates_list)
         results['label'].append(pred_list)
-    
+        
     return results
 
 def predict_survival(model, val_dataloader, device='cpu'):
@@ -103,7 +129,6 @@ def read_patches(slide, max_patches_per_slide = np.inf):
     
     # Create training and validation dataloaders
     dataloader = DataLoader(dataset, batch_size=64, sampler=image_samplers)
-
     return dataloader
 
 def save_uploaded_file(uploaded_file):
@@ -113,3 +138,36 @@ def save_uploaded_file(uploaded_file):
 
 def clear(file):
     os.remove(file)
+
+
+def style_table(df):
+    # style
+    th_props = [
+    ('font-size', '20pt'),
+    ('text-align', 'center'),
+    ('font-weight', 'bold'),
+    ('color', '#6d6d6d'),
+    ('background-color', '#f7ffff')
+    ]
+                                
+    td_props = [
+    ('font-size', '20pt')
+    ]
+                                    
+    styles = [
+    dict(selector="th", props=th_props),
+    dict(selector="td", props=td_props)
+    ]
+
+    df_style = df.style.set_properties(**{
+    'font-size': '20pt',
+    'text-align': 'center',
+    'format': '{:.3f}'
+    }).set_table_styles(styles)
+
+    return df_style
+
+
+
+
+

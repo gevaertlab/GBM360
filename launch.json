@@ -1,0 +1,11 @@
+{
+    "name": "Python:Streamlit",
+    "type": "python",
+    "request": "launch",
+    "module": "streamlit",
+    "args": [
+        "run",
+        "${file}",
+        "--server.port",
+        "8501"]
+}
