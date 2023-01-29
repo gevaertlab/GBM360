@@ -93,7 +93,7 @@ def app():
 
         # Display statistic tables for cell proportions 
         color_ids, cluster_colors = get_color_ids()
-        st.markdown('<p class="mid-font">Cell fraction (%)</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Cell fraction (%)</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
@@ -110,7 +110,7 @@ def app():
                 st.image(buf)
 
         # Display interaction matrix
-        st.markdown('<p class="mid-font">Interaction matrix</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Interaction matrix</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
@@ -125,7 +125,7 @@ def app():
                 st.image(buf)
         
         # Display statistic tables for degree centrality
-        st.markdown('<p class="mid-font">Degree centrality</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Degree centrality</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
@@ -142,7 +142,7 @@ def app():
                 st.image(buf)
         
         # Display statistic tables for clustering coefficient
-        st.markdown('<p class="mid-font">Clustering coefficient</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Clustering coefficient</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
