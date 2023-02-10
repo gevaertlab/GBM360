@@ -1,0 +1,14 @@
+{
+"model_name": "resnet50",
+"target_label": "max_class",
+"use_h5": 0, 
+"num_classes": 6,
+"batch_size": 128,
+"use_cuda":1,
+"label_column" : "label",
+"pretrained": 1,
+"img_size": 46,
+"aggregator": "identity",
+"aggregator_hdim": 2048,
+"compress_factor": 32
+}

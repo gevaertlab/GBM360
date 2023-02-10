@@ -10,24 +10,27 @@ from spatial_stat import gen_graph, compute_percent
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import BytesIO
+import json
 
 def app():
 
     # Main config
-    config = {
-    "model_name": "resnet50",
-    "target_label": "max_class",
-    "use_h5": 0, 
-    "num_classes": 6,
-    "batch_size": 128,
-    "use_cuda":True,
-    'label_column' : 'label',
-    'pretrained': True,
-    "img_size": 46,
-    'aggregator': 'identity',
-    "aggregator_hdim": 2048,
-    "compress_factor": 32
-    }
+    # config = {
+    # "model_name": "resnet50",
+    # "target_label": "max_class",
+    # "use_h5": 0, 
+    # "num_classes": 6,
+    # "batch_size": 128,
+    # "use_cuda":True,
+    # 'label_column' : 'label',
+    # 'pretrained': True,
+    # "img_size": 46,
+    # 'aggregator': 'identity',
+    # "aggregator_hdim": 2048,
+    # "compress_factor": 32
+    # }
+    with open("config/config.json", 'r') as f:
+        config = json.load(f)
 
     # Specify canvas parameters in application
     bg_image = st.file_uploader("Image:", type=["tiff","svs"])
@@ -74,7 +77,7 @@ def app():
             dataloader = read_patches(slide, max_patches_per_slide)
 
         with st.spinner('Loading model...'):
-            model = load_model(checkpoint='model_cell.pt', config = config)
+            model = load_model(checkpoint='model_weights/model_cell.pt', config = config)
         
         with st.spinner('Predicting cell types...'):
             results = predict_cell(model, dataloader, device=device)
@@ -167,7 +170,7 @@ def app():
 
         config['num_classes'] = 1
         with st.spinner('Loading model...'):
-            model = load_model(checkpoint='model_survival.pt', config = config)
+            model = load_model(checkpoint='model_weights/model_survival.pt', config = config)
         
         with st.spinner('Predicting survival...'):
             results = predict_survival(model, dataloader, device=device)

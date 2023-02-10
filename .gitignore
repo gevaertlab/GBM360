@@ -1,10 +1,10 @@
-*.jpg
-*.pt
-__pycache__/*
-temp/*
-config/*
-Dockerfile
-auth.py
-.DS_Store
+__pycache__/
+model_weights/
 example/
+temp/
+config/auth.yaml
+src/auth.py
+Dockerfile
+.DS_Store
+
 
