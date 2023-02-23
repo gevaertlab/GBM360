@@ -35,8 +35,7 @@ with tab1:
     about.app()
 
 with tab2:
-    #auth.app()
-    None
+    st.markdown('<p class="big-font">Registration is not required at this time.</p>', unsafe_allow_html=True)
 
 with tab3:
     # if not st.session_state["authentication_status"]:
