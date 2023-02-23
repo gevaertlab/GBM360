@@ -22,7 +22,7 @@ Install the required packages: `pip install -r requirements.txt`
 
 ## Instructions for use ##
 
-A fully functional software can be used from https://gbm360.stanford.edu. To upload a new histology slide or use an example slide, click the `run` option (see the `Demo` section below).
+To upload a new histology slide or use an example slide, click the `run` option (see the `Demo` section below).
 
 For local access, clone this git repository and install the software following the instructions in the `Installation` section.
 
