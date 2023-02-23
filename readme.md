@@ -8,7 +8,7 @@ All dependencies can be found in requirements.txt
 
 ## Installation ##
 
-No installation is required. To use the software, simply clone this git repository: `git clone https://github.com/gevaertlab/GBM360.git`
+No installation is required. To use the software, simply clone this git repository: `git clone https://github.com/gevaertlab/GBM360.git` or visit https://gbm360.stanford.edu/. 
 
 ## Demo ## 
 
@@ -16,7 +16,7 @@ For demonstration, please visit https://gbm360.stanford.edu/. Click the "run" op
 
 ## Instructions for use ##
 
-The software can be used by visiting: https://gbm360.stanford.edu/
+The software can be used by visiting: https://gbm360.stanford.edu/. To upload a new slide or use an example slide, click the "run" option. 
 
 
 
