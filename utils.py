@@ -143,7 +143,7 @@ def clear(file):
 def style_table(df):
     # style
     th_props = [
-    ('font-size', '20pt'),
+    ('font-size', '18pt'),
     ('text-align', 'center'),
     ('font-weight', 'bold'),
     ('color', '#6d6d6d'),
@@ -151,7 +151,7 @@ def style_table(df):
     ]
                                 
     td_props = [
-    ('font-size', '20pt')
+    ('font-size', '18pt')
     ]
                                     
     styles = [
@@ -160,7 +160,7 @@ def style_table(df):
     ]
 
     df_style = df.style.set_properties(**{
-    'font-size': '20pt',
+    'font-size': '16pt',
     'text-align': 'center',
     'format': '{:.3f}'
     }).set_table_styles(styles)
