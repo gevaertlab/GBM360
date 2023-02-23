@@ -2,8 +2,6 @@
 
 GBM360 is a machine-learning tool to resolve the intra-tumoral cell-state heterogeneity of glioblastoma (GBM).
 
----
-
 ## System requirements ##
 
 All dependencies can be found in requirements.txt
@@ -14,7 +12,7 @@ No installation is required. To use the software, simply clone this git reposito
 
 ## Demo ## 
 
-https://gbm360.stanford.edu/ 
+For demonstration, please visit https://gbm360.stanford.edu/. Click the "run" option and "use an example slide". 
 
 ## Instructions for use ##
 
