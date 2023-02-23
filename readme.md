@@ -16,7 +16,7 @@ For demonstration, please visit https://gbm360.stanford.edu/. Click the "run" op
 
 ## Instructions for use ##
 
-The software can be used by visiting: https://gbm360.stanford.edu/
+The software can be used by visiting: https://gbm360.stanford.edu/. To upload a new slide or use an example slide, click the "run" option. 
 
 
 
