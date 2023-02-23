@@ -8,7 +8,7 @@ All dependencies can be found in requirements.txt
 
 ## Installation ##
 
-No installation is required. To use the software, simply clone this git repository: `git clone https://github.com/gevaertlab/GBM360.git`
+No installation is required. To use the software, simply clone this git repository: `git clone https://github.com/gevaertlab/GBM360.git` or visit https://gbm360.stanford.edu/. 
 
 ## Demo ## 
 
