@@ -1,4 +1,9 @@
-# Script to generate the visulization of cell types in whole slide images
+
+"""
+Script to generate the visualization of cell types and prognostic scores in whole slide images
+
+"""
+
 from typing import Tuple
 import pandas as pd
 import numpy as np

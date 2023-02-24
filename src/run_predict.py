@@ -1,12 +1,14 @@
+"""
+The run prediction page
+"""
+
 import numpy as np
 from PIL import Image
 import streamlit as st
 from openslide import OpenSlide
-import pandas as pd
 from utils import *
 from spa_mapping import generate_heatmap_cell_type, generate_heatpmap_survival
 from spatial_stat import gen_graph, compute_percent
-#from heatmap_survival import generate_heatpmap_survival
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -14,21 +16,6 @@ import json
 
 def app():
 
-    # Main config
-    # config = {
-    # "model_name": "resnet50",
-    # "target_label": "max_class",
-    # "use_h5": 0, 
-    # "num_classes": 6,
-    # "batch_size": 128,
-    # "use_cuda":True,
-    # 'label_column' : 'label',
-    # 'pretrained': True,
-    # "img_size": 46,
-    # 'aggregator': 'identity',
-    # "aggregator_hdim": 2048,
-    # "compress_factor": 32
-    # }
     with open("config/config.json", 'r') as f:
         config = json.load(f)
 

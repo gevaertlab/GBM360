@@ -1,3 +1,8 @@
+
+"""
+Define dataset structure for torch data loaders
+"""
+
 from torch.utils.data import Dataset
 
 class PatchDataset(Dataset):

@@ -1,3 +1,7 @@
+"""
+Utility functions to perform spatial statistical analysis
+"""
+
 from openslide import OpenSlide
 import math
 from anndata import AnnData
@@ -40,6 +44,34 @@ def get_matracies(slide, cluster_df, patch_size = (112, 112)):
     return(matrix_trait)
 
 
+def get_interactions(cells):
+    """
+    Generate a list of interactions between cell types, except for self-interactions.
+    """
+    interactions = []
+    i, j = 0, 0
+    while i < len(cells):
+        j = i + 1
+        while j < len(cells):
+            concat = [cells[i], cells[j]]
+            interactions.append(concat)
+            j = j + 1
+        i = i + 1
+    return interactions
+
+def normalize_interactions(im_mtx, cell_types):
+    """
+    Given a cell interaction matrix, normalize each type of interaction by dividing the total number of interactions
+    """
+    sum_links = im_mtx.sum().sum()
+    interactions = get_interactions(cell_types)
+    duplicated_links = 0
+    for inter in interactions:
+        duplicated_links = duplicated_links + im_mtx.loc[inter[0], inter[1]]
+    new_links = sum_links - duplicated_links
+    im_mtx_norm = im_mtx.div(new_links)
+    return im_mtx_norm
+
 def gen_graph(slide, results):
 
     cluster_df = gen_output(results)
@@ -60,11 +92,14 @@ def gen_graph(slide, results):
 
     sq.gr.spatial_neighbors(adata, n_neighs=8, n_rings=2, coord_type="grid")
     sq.gr.centrality_scores(adata, cluster_key='label', show_progress_bar=False)
-    sq.gr.interaction_matrix(adata, cluster_key='label', normalized = True)
+    sq.gr.interaction_matrix(adata, cluster_key='label')
 
     # Generate dataframes
     dgr_centr = pd.DataFrame({'cell_type': cell_types, 'centrality':adata.uns['label_centrality_scores']['degree_centrality']})
+
     im_mtx = pd.DataFrame(adata.uns['label_interactions'], columns=cell_types, index=cell_types)
+    im_mtx = normalize_interactions(im_mtx, cell_types)
+    
     cluster_res = []
     for cell in cell_types:
         cluster_res.append(im_mtx.loc[cell][cell])
@@ -79,6 +114,10 @@ def gen_graph(slide, results):
     return dgr_centr, im_mtx, df_cluster
 
 def compute_percent(labels):
+    """
+    Compute cell type compositions
+    """
+    
     labels = labels['label']
     labels = np.concatenate((labels), axis=0)
     # convert predicted labels to actual cell types
@@ -95,31 +134,6 @@ def compute_percent(labels):
     df = df.sort_values(['Percentage'], ascending=False)
     df = df.reset_index(drop=True)
     return df
-
-
-    
-        
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-
-    plt.figure()
-    sq.pl.interaction_matrix(adata, cluster_key=args.label)
-    plt.savefig(os.path.join(inter_matrix_path, f"{s}.png"), bbox_inches='tight')
-    plt.close()
-
 
 
     

@@ -1,3 +1,7 @@
+"""
+The main page of GBM360
+"""
+
 import streamlit as st
 import base64
 

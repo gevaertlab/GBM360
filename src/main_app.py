@@ -1,8 +1,8 @@
-import numpy as np
-from PIL import Image
+"""
+Landing point of GBM360
+"""
+
 import streamlit as st
-import streamlit_authenticator as stauth
-from streamlit_drawable_canvas import st_canvas
 import os
 from utils import *
 import run_predict

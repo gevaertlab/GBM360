@@ -1,11 +1,9 @@
-import pandas as pd
+"""
+Utility functions to isolate foreground from background and to extract patches
+"""
 import numpy as np
-from openslide import OpenSlide
-import os
-import matplotlib.pyplot as plt
 from skimage.color import rgb2hsv
 from skimage.filters import threshold_otsu
-from skimage.io import imsave, imread
 from skimage.exposure.exposure import is_low_contrast
 from skimage.transform import resize
 from scipy.ndimage.morphology import binary_dilation, binary_erosion
