@@ -78,7 +78,7 @@ def app():
 
         with st.spinner('Calculating spatial statistics...'):
             df_percent = compute_percent(results) # cell type composition
-            dgr_centr, im_mtx, df_cluster = gen_graph(slide, results = results) # graph statistics
+            dgr_centr, im_mtx_slide, im_mtx_row, df_cluster = gen_graph(slide, results = results) # graph statistics
         
 
         # Display statistic tables for cell proportions 
@@ -99,17 +99,32 @@ def app():
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
 
-        # Display interaction matrix
-        st.markdown('<p class="big-font">Interaction matrix</p>', unsafe_allow_html=True)
+        # Display row-normalized interaction matrix
+        st.markdown('<p class="big-font">Interaction matrix (row normalized)</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
             with table:
-                st.table(data=style_table(im_mtx))
+                st.table(data=style_table(im_mtx_row))
             with plot:
                 buf = BytesIO()
                 fig, ax = plt.subplots()
-                sns.heatmap(im_mtx, ax = ax)
+                sns.heatmap(im_mtx_row, ax = ax)
+                ax.tick_params(labelsize=16)
+                fig.savefig(buf, format="png", bbox_inches = "tight")
+                st.image(buf)
+        
+        # Display slide-normalized interaction matrix
+        st.markdown('<p class="big-font">Interaction matrix (slide normalized)</p>', unsafe_allow_html=True)
+        data_container = st.container()
+        with data_container:
+            table, plot, _ , _ = st.columns(4)
+            with table:
+                st.table(data=style_table(im_mtx_slide))
+            with plot:
+                buf = BytesIO()
+                fig, ax = plt.subplots()
+                sns.heatmap(im_mtx_slide, ax = ax)
                 ax.tick_params(labelsize=16)
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)

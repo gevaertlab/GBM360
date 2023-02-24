@@ -98,7 +98,8 @@ def gen_graph(slide, results):
     dgr_centr = pd.DataFrame({'cell_type': cell_types, 'centrality':adata.uns['label_centrality_scores']['degree_centrality']})
 
     im_mtx = pd.DataFrame(adata.uns['label_interactions'], columns=cell_types, index=cell_types)
-    im_mtx = normalize_interactions(im_mtx, cell_types)
+    im_mtx_slide = normalize_interactions(im_mtx, cell_types)
+    im_mtx_row = im_mtx.div(im_mtx.sum(axis=1), axis=0)
     
     cluster_res = []
     for cell in cell_types:
@@ -111,7 +112,7 @@ def gen_graph(slide, results):
     dgr_centr = dgr_centr.reset_index(drop = True)
     df_cluster = df_cluster.reset_index(drop = True)
 
-    return dgr_centr, im_mtx, df_cluster
+    return dgr_centr, im_mtx_slide, im_mtx_row, df_cluster
 
 def compute_percent(labels):
     """
