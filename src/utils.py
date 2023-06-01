@@ -8,16 +8,12 @@ import numpy as np
 from torchvision import transforms
 from torch.utils.data import DataLoader, SequentialSampler, DataLoader
 from stqdm import stqdm
-from scipy.special import softmax as scipy_softmax
 import seaborn as sns
-import pandas as pd
 
 from resnet import resnet50
 from pathology_models import AggregationModel, Identity, TanhAttention
 from get_patch_img import extract_patches
 from dataset import PatchDataset
-
-import pdb
 
 def get_class():
     class2idx = {
