@@ -8,7 +8,8 @@ import base64
 
 def app():
     with st.container():
-        st.markdown('<p class="big-font"> GBM360 is a machine learning tool that uses histology images to resolve the spatial heterogeneity of glioblastoma cells.</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font"> GBM360 is a machine learning tool that uses histology images to resolve the </p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font"> spatial heterogeneity and predict the aggressiveness of glioblastoma cells.</p>', unsafe_allow_html=True)
         st.image('pictures/demo.png', width=1000)
 
     with st.expander("Disclaimer"):
@@ -17,4 +18,4 @@ def app():
     with st.expander("Contact"):
         st.markdown("""Visit us at: [Dr.Gevaert lab](https://med.stanford.edu/gevaertlab.html)""")
         
-    st.write("(c) 2022 All rights reserved.")
+    st.write("(c) 2023 All rights reserved.")
