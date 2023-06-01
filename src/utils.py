@@ -8,7 +8,9 @@ import numpy as np
 from torchvision import transforms
 from torch.utils.data import DataLoader, SequentialSampler, DataLoader
 from stqdm import stqdm
+from scipy.special import softmax as scipy_softmax
 import seaborn as sns
+import pandas as pd
 
 from resnet import resnet50
 from pathology_models import AggregationModel, Identity, TanhAttention
@@ -19,24 +21,24 @@ import pdb
 
 def get_class():
     class2idx = {
-        'Normal' : 0,
-        'NPC-like' : 1,
-        'OPC-like' : 2,
-        'Reactive astrocytes' : 3,
-        'MES-hypoxia': 4,
-        'MES-like': 5
+    'Normal': 0,
+    'NPC' : 1,
+    'OPC' : 2,
+    'AC' : 3,
+    'MESlike': 4,
+    'MEShypoxia':5
     }
     id2class = {v: k for k, v in class2idx.items()}  
     return class2idx, id2class
 
 def get_color_ids():
     color_ids = {
-        'Normal' : 1,
-        'NPC-like' : 0,
-        'OPC-like' : 3,
-        'Reactive astrocytes' : 2,
-        'MES-hypoxia': 4,
-        'MES-like': 5
+    'Normal': 1, 
+    'NPC' : 0,
+    'OPC' : 3,
+    'AC' : 2,
+    'MESlike': 5,
+    'MEShypoxia': 4
     }
     clusters_colors = {}
     for k, v in color_ids.items():
@@ -67,6 +69,7 @@ def load_model(checkpoint: str, config=None):
     
     return model
 
+
 def predict_cell(model, val_dataloader, device='cpu'):
     
     model.to(torch.device(device))
@@ -85,11 +88,16 @@ def predict_cell(model, val_dataloader, device='cpu'):
             outputs, _ = model.forward(inputs)
         
         outputs = outputs.detach().cpu().numpy()
-        pred_list = np.argmax(outputs, axis=1)
+
+        tumor_arr = outputs[:, :6]
+        class_weights = [1.0, 0.6, 1.4 , 0.5, 1.4, 1.8]
+        tumor_arr = tumor_arr * class_weights
+
+        pred_list = np.argmax(tumor_arr, axis=1)
         coordinates_list = [(x, y) for x, y in zip(coordinates[0], coordinates[1])]
         results['coordinates'].append(coordinates_list)
         results['label'].append(pred_list)
-        
+
     return results
 
 def predict_survival(model, val_dataloader, device='cpu'):
@@ -123,7 +131,6 @@ def predict_survival(model, val_dataloader, device='cpu'):
 def read_patches(slide, max_patches_per_slide = np.inf):
     patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=max_patches_per_slide)
     data_transforms = transforms.Compose([
-        transforms.Resize(46),
         transforms.Resize(224),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])

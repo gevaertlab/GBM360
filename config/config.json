@@ -2,7 +2,7 @@
 "model_name": "resnet50",
 "target_label": "max_class",
 "use_h5": 0, 
-"num_classes": 6,
+"num_classes": 8,
 "batch_size": 128,
 "use_cuda":1,
 "label_column" : "label",

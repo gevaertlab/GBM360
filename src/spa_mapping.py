@@ -100,7 +100,7 @@ def generate_heatmap_cell_type(slide, patch_size: Tuple, labels, config):
 
     print(f'Overlap patches: {len(set(labels_dict.keys()) & set(indices))}')
 
-    for x, y in indices:
+    for x, y in stqdm(indices):
         try:
             patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
             patch = Image.fromarray(patch)

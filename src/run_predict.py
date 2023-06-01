@@ -13,6 +13,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from io import BytesIO
 import json
+import pyvips
 
 def app():
 
@@ -20,11 +21,15 @@ def app():
         config = json.load(f)
 
     # Specify canvas parameters in application
-    bg_image = st.file_uploader("Image:", type=["tiff","svs"])
+    bg_image = st.file_uploader("Image:", type=["tiff", 'tif', "svs"])
 
     # Control panel
     example_button = st.button("Use an example slide")
-    test_mode = st.selectbox("Test mode (only 1000 patches will be predicted):", ("True", "False"))
+    test_mode = st.selectbox("Test mode (only 1,000 patches will be predicted):", ("True", "False"))
+    st.markdown("**Note**: We are currently seeking GPU acceleration for this software. To expedite the process, we have set \n"
+                "the default mode to 'test mode', which will only predict 1,000 patches of the image. \n"
+                "To predict the entire image, please set the 'test mode' parameter to False.")
+
     cell_type_button = st.button("Get cell type visualization")
     prognosis_button = st.button("Get prognosis visualization")
     clear_button = st.button("Clear the session")
@@ -43,6 +48,12 @@ def app():
 
     if bg_image:
         path = save_uploaded_file(bg_image)
+
+        if path.endswith("tiff") or path.endswith("tif"):
+            image = pyvips.Image.new_from_file(path)
+            image.write_to_file("temp/test.tiff", pyramid=True, tile=True)
+            path = "temp/test.tiff"
+
         st.session_state.slide = OpenSlide(path)
         st.session_state.image = st.session_state.slide.get_thumbnail(size=(512,512))
         st.image(st.session_state.image)
@@ -64,7 +75,7 @@ def app():
             dataloader = read_patches(slide, max_patches_per_slide)
 
         with st.spinner('Loading model...'):
-            model = load_model(checkpoint='model_weights/model_cell.pt', config = config)
+            model = load_model(checkpoint='model_weights/train_2023-04-28_prob_multi_label_weighted/model_cell.pt', config = config)
         
         with st.spinner('Predicting cell types...'):
             results = predict_cell(model, dataloader, device=device)
@@ -80,7 +91,6 @@ def app():
             df_percent = compute_percent(results) # cell type composition
             dgr_centr, im_mtx_slide, im_mtx_row, df_cluster = gen_graph(slide, results = results) # graph statistics
         
-
         # Display statistic tables for cell proportions 
         color_ids, cluster_colors = get_color_ids()
         st.markdown('<p class="big-font">Cell fraction (%)</p>', unsafe_allow_html=True)
@@ -92,15 +102,15 @@ def app():
             with plot:
                 buf = BytesIO()
                 fig, ax = plt.subplots()
-                sns.barplot(data = df_percent, y = 'cell_type', x = "Percentage", palette = cluster_colors, ax = ax)
-                ax.tick_params(labelsize=16)
+                sns.barplot(data = df_percent, y = 'Subtype', x = "Percentage", palette = cluster_colors, ax = ax)
+                ax.tick_params(labelsize=14)
                 ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
                 ax.set_xlabel('Percentage (%)',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
 
         # Display row-normalized interaction matrix
-        st.markdown('<p class="big-font">Interaction matrix (row normalized)</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Interaction matrix (row-wise normalized)</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
@@ -110,12 +120,12 @@ def app():
                 buf = BytesIO()
                 fig, ax = plt.subplots()
                 sns.heatmap(im_mtx_row, ax = ax)
-                ax.tick_params(labelsize=16)
+                #ax.tick_params(labelsize=12)
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
         
         # Display slide-normalized interaction matrix
-        st.markdown('<p class="big-font">Interaction matrix (slide normalized)</p>', unsafe_allow_html=True)
+        st.markdown('<p class="big-font">Interaction matrix (slide-wise normalized)</p>', unsafe_allow_html=True)
         data_container = st.container()
         with data_container:
             table, plot, _ , _ = st.columns(4)
@@ -125,24 +135,7 @@ def app():
                 buf = BytesIO()
                 fig, ax = plt.subplots()
                 sns.heatmap(im_mtx_slide, ax = ax)
-                ax.tick_params(labelsize=16)
-                fig.savefig(buf, format="png", bbox_inches = "tight")
-                st.image(buf)
-        
-        # Display statistic tables for degree centrality
-        st.markdown('<p class="big-font">Degree centrality</p>', unsafe_allow_html=True)
-        data_container = st.container()
-        with data_container:
-            table, plot, _ , _ = st.columns(4)
-            with table:
-                st.table(data=style_table(dgr_centr))
-            with plot:
-                buf = BytesIO()
-                fig, ax = plt.subplots()
-                sns.barplot(data = dgr_centr, y = 'cell_type', x = 'centrality' , palette = cluster_colors, ax = ax)
-                ax.tick_params(labelsize=16)
-                ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
-                ax.set_xlabel('Centrality score',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
+                #ax.tick_params(labelsize=12)
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
         
@@ -156,12 +149,29 @@ def app():
             with plot:
                 buf = BytesIO()
                 fig, ax = plt.subplots()
-                sns.barplot(data = df_cluster, y = 'cell_type', x = 'cluster_coeff' , palette = cluster_colors, ax = ax)
-                ax.tick_params(labelsize=16)
+                sns.barplot(data = df_cluster, y = 'Subtype', x = 'cluster_coeff' , palette = cluster_colors, ax = ax)
+                ax.tick_params(labelsize=14)
                 ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
                 ax.set_xlabel('Clustering coefficient',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
+
+        # # Display statistic tables for degree centrality
+        # st.markdown('<p class="big-font">Degree centrality</p>', unsafe_allow_html=True)
+        # data_container = st.container()
+        # with data_container:
+        #     table, plot, _ , _ = st.columns(4)
+        #     with table:
+        #         st.table(data=style_table(dgr_centr))
+        #     with plot:
+        #         buf = BytesIO()
+        #         fig, ax = plt.subplots()
+        #         sns.barplot(data = dgr_centr, y = 'Subtype', x = 'centrality' , palette = cluster_colors, ax = ax)
+        #         ax.tick_params(labelsize=14)
+        #         ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
+        #         ax.set_xlabel('Centrality score',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
+        #         fig.savefig(buf, format="png", bbox_inches = "tight")
+        #         st.image(buf)
     
     if prognosis_button and st.session_state.slide:
 

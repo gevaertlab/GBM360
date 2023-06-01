@@ -95,16 +95,16 @@ def gen_graph(slide, results):
     sq.gr.interaction_matrix(adata, cluster_key='label')
 
     # Generate dataframes
-    dgr_centr = pd.DataFrame({'cell_type': cell_types, 'centrality':adata.uns['label_centrality_scores']['degree_centrality']})
+    dgr_centr = pd.DataFrame({'Subtype': cell_types, 'centrality':adata.uns['label_centrality_scores']['degree_centrality']})
 
     im_mtx = pd.DataFrame(adata.uns['label_interactions'], columns=cell_types, index=cell_types)
     im_mtx_slide = normalize_interactions(im_mtx, cell_types)
     im_mtx_row = im_mtx.div(im_mtx.sum(axis=1), axis=0)
-    
+
     cluster_res = []
     for cell in cell_types:
-        cluster_res.append(im_mtx.loc[cell][cell])
-    df_cluster = pd.DataFrame({'cell_type': cell_types, 'cluster_coeff': cluster_res})
+        cluster_res.append(im_mtx_row.loc[cell][cell])
+    df_cluster = pd.DataFrame({'Subtype': cell_types, 'cluster_coeff': cluster_res})
 
     dgr_centr = dgr_centr.sort_values(["centrality"], ascending=False)
     df_cluster = df_cluster.sort_values(['cluster_coeff'], ascending=False)
@@ -131,7 +131,7 @@ def compute_percent(labels):
         count = pred_labels.count(cell)
         percent = float(count/total) * 100
         frac.append(percent)
-    df = pd.DataFrame({'cell_type': cell_types, 'Percentage': frac})
+    df = pd.DataFrame({'Subtype': cell_types, 'Percentage': frac})
     df = df.sort_values(['Percentage'], ascending=False)
     df = df.reset_index(drop=True)
     return df
