@@ -60,7 +60,7 @@ def app():
         bg_image = None
 
     if example_button:
-        path = os.path.join("example", "C3L-00016-21.svs")
+        path = os.path.join("example", "C3L-00365-21.svs")
         st.session_state.slide = OpenSlide(path)
         st.session_state.image = st.session_state.slide.get_thumbnail(size=(512,512))
         st.image(st.session_state.image)
