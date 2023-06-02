@@ -1,13 +1,15 @@
 ## Instructions for use ##
 
-1. For bug report and a complete demonstration, please visit: https://github.com/gevaertlab/GBM360 
+1. For bug reporting and a complete demonstration, please visit: https://github.com/gevaertlab/GBM360 
 2. Click the `Run` tab located at the top of the page.
 3. To start the analysis, user can either upload a new histology image or simply click `Use an example slide`. <br>
     **Note**: 
     - We currently support images saved in *tif*, *tiff* or *svs* format. <br>
     - Ideally, the image should be scanned at 20X magnification with a pixel resolution of 0.5um / pixel.
 
-A thumbnail of the image will display when the upload is completed
+A thumbnail of the image will display when the upload is complete
+
+<br/>
 
 4. Select the mode for running the job. <br>
     **Note**: 

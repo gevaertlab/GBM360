@@ -40,7 +40,7 @@ This repository contains the source code of GBM360 for demonstration purpose onl
 
 <img src="pictures/screenshot_file_upload.png" width = "70%" height = "70%">
 
-A thumbnail of the image will display when the upload is completed
+A thumbnail of the image will display when the upload is complete
 
 <img src="pictures/screenshot_thumbnail.png" width = "70%" height = "70%">
 

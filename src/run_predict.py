@@ -27,8 +27,8 @@ def app():
     example_button = st.button("Use an example slide")
     test_mode = st.selectbox("Run Mode:", ("Test mode (only 1,000 patches will be predicted)", "Complete"))
     st.markdown("**Note**: We are currently working on obtaining GPU support for this software. To expedite the process, the default mode "
-                "is now set to `Test mode`, which will only predict 1,000 patches of the image."
-                "To predict the entire image, please switch to `Complete` mode")
+                "is now set to `Test mode`, which will only predict 1,000 patches of the image. "
+                "To predict the entire image, please switch to the `Complete` mode.")
 
     cell_type_button = st.button("Get cell type visualization")
     prognosis_button = st.button("Get prognosis visualization")
