@@ -135,7 +135,7 @@ def generate_heatpmap_survival(slide, patch_size: Tuple, results: dict, min_val=
     min_val = np.min(risk_score)
     max_val = np.max(risk_score)
 
-    for x, y in indices:
+    for x, y in stqdm(indices):
         try:
             patch = np.transpose(np.array(slide.read_region((x, y), PATCH_LEVEL, patch_size_resized).convert('RGB')), axes=[1, 0, 2])
             patch = Image.fromarray(patch)

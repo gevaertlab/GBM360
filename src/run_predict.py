@@ -25,10 +25,10 @@ def app():
 
     # Control panel
     example_button = st.button("Use an example slide")
-    test_mode = st.selectbox("Test mode (only 1,000 patches will be predicted):", ("True", "False"))
-    st.markdown("**Note**: We are currently seeking GPU acceleration for this software. To expedite the process, we have set \n"
-                "the default mode to 'test mode', which will only predict 1,000 patches of the image. \n"
-                "To predict the entire image, please set the 'test mode' parameter to False.")
+    test_mode = st.selectbox("Run Mode:", ("Test mode (only 1,000 patches will be predicted)", "Complete"))
+    st.markdown("**Note**: We are currently working on obtaining GPU support for this software. To expedite the process, the default mode "
+                "is now set to `Test mode`, which will only predict 1,000 patches of the image."
+                "To predict the entire image, please switch to `Complete` mode")
 
     cell_type_button = st.button("Get cell type visualization")
     prognosis_button = st.button("Get prognosis visualization")
@@ -66,7 +66,7 @@ def app():
         st.image(st.session_state.image)
     
     max_patches_per_slide = np.inf
-    if test_mode == "True":
+    if test_mode == "Test mode (only 1,000 patches will be predicted)":
         max_patches_per_slide = 1000
 
     if cell_type_button and st.session_state.slide:
@@ -77,7 +77,7 @@ def app():
         with st.spinner('Loading model...'):
             model = load_model(checkpoint='model_weights/train_2023-04-28_prob_multi_label_weighted/model_cell.pt', config = config)
         
-        with st.spinner('Predicting cell types...'):
+        with st.spinner('Predicting transcriptional subtypes...'):
             results = predict_cell(model, dataloader, device=device)
         
         with st.spinner('Generating visualization...'):
@@ -85,7 +85,7 @@ def app():
         im = Image.fromarray(heatmap)
         legend = Image.open('pictures/cell-type-hor.png')
         st.image(legend)
-        st.image(im, caption='Cell distribution accross the tissue')
+        st.image(im, caption='Subtype distribution across the tissue')
 
         with st.spinner('Calculating spatial statistics...'):
             df_percent = compute_percent(results) # cell type composition
@@ -184,7 +184,7 @@ def app():
         with st.spinner('Loading model...'):
             model = load_model(checkpoint='model_weights/model_survival.pt', config = config)
         
-        with st.spinner('Predicting survival...'):
+        with st.spinner('Predicting aggressive scores...'):
             results = predict_survival(model, dataloader, device=device)
         config['label_column'] = 'risk_score'
       
@@ -197,7 +197,7 @@ def app():
         legend = Image.open('pictures/risk_score_legend.png')
         st.image(legend)
         im = Image.fromarray(heatmap)
-        st.image(im, caption='Risk score prediction')
+        st.image(im, caption='Aggressive score prediction')
 
     if clear_button:
         clear(path)

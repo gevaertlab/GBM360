@@ -29,13 +29,15 @@ button[data-baseweb="tab"] {
 
 st.image("pictures/logo.png", width = 150)
 
-tab1, tab2, tab3 = st.tabs(["About", "Log in", "Run"])
+tab1, tab2, tab3 = st.tabs(["About", "Tutorial", "Run"])
 
 with tab1:
     about.app()
 
 with tab2:
-    st.markdown('<p class="big-font">Registration is not required at this time.</p>', unsafe_allow_html=True)
+    #st.markdown('<p class="big-font">Registration is not required at this time.</p>', unsafe_allow_html=True)
+    intro_markdown = read_markdown_file("tutorial.md")
+    st.markdown(intro_markdown, unsafe_allow_html=True)
 
 with tab3:
     # if not st.session_state["authentication_status"]:

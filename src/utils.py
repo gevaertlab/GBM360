@@ -14,6 +14,7 @@ from resnet import resnet50
 from pathology_models import AggregationModel, Identity, TanhAttention
 from get_patch_img import extract_patches
 from dataset import PatchDataset
+from pathlib import Path
 
 def get_class():
     class2idx = {
@@ -173,6 +174,9 @@ def style_table(df):
     }).set_table_styles(styles)
 
     return df_style
+
+def read_markdown_file(markdown_file):
+    return Path(markdown_file).read_text()
 
 
 
