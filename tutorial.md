@@ -9,8 +9,6 @@
 
 A thumbnail of the image will display when the upload is complete
 
-<br/>
-
 4. Select the mode for running the job. <br>
     **Note**: 
     
