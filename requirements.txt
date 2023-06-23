@@ -19,4 +19,7 @@ torchvision == 0.13.0
 scanpy == 1.9.1
 squidpy == 1.2.3
 pyvips
+beautifulsoup4 == 4.11.1
+pathlib == 1.0.1
+
 
