@@ -1,7 +1,5 @@
-
-1. For bug reporting and a complete demonstration, please visit: https://github.com/gevaertlab/GBM360 
-2. Click the `Run` tab located at the top of the page.
-3. To start the analysis, user can either upload a new histology image or simply click `Use an example slide`. <br>
+1. Click the `Run` tab located at the top of the page.
+2. To start the analysis, user can either upload a new histology image or simply click `Use an example slide`. <br>
     **Note**: 
     - We currently support images saved in *tif*, *tiff* or *svs* format. <br>
     - Ideally, the image should be scanned at 20X magnification with a pixel resolution of 0.5um / pixel.
@@ -12,7 +10,7 @@ A thumbnail of the image will display when the upload is complete
 
 ![Example Image](pictures/screenshot_thumbnail.png)
 
-4. Select the mode for running the job. <br>
+3. Select the mode for running the job. <br>
     **Note**: 
     
     - The default mode is set to the `Test mode`, which will only predicts a limited portion of the image (1,000 patches). This is meant to speed up the process by generating a quick preview of the results. 
@@ -21,7 +19,7 @@ A thumbnail of the image will display when the upload is complete
 
 ![Example Image](pictures/screenshot_mode.png)
     
-5. Click the `Get cell type visualization` button to predict the spatial distribution of transcriptional subtype for tumor cells.
+4. Click the `Get cell type visualization` button to predict the spatial distribution of transcriptional subtype for tumor cells.
 
 ![Example Image](pictures/screenshot_option.png)
 
@@ -31,7 +29,7 @@ The image will be colored by the predicted transcriptional subtype:
 
 <br/>
 
-6. Based on the spatial subtype prediction, the software will automatically make several statistical analysis to quantify subtype compositions and spatial cellular organization:
+5. Based on the spatial subtype prediction, the software will automatically make several statistical analysis to quantify subtype compositions and spatial cellular organization:
 
     (1) Subtype fraction
 
@@ -49,5 +47,5 @@ The image will be colored by the predicted transcriptional subtype:
 
 Blue indicates low aggressiveness, while Red indicates high aggressiveness
 
-![Example Image](pictures/screenshot_gg.png)
+![Example Image](pictures/screenshot_agg.png)
 
