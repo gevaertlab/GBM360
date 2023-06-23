@@ -1,7 +1,6 @@
 """
 The run prediction page
 """
-
 import numpy as np
 from PIL import Image
 import streamlit as st
@@ -14,8 +13,11 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import json
 import pyvips
+from ga import inject_ga
 
 def app():
+
+    inject_ga()
 
     with open("config/config.json", 'r') as f:
         config = json.load(f)
@@ -155,23 +157,6 @@ def app():
                 ax.set_xlabel('Clustering coefficient',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
                 fig.savefig(buf, format="png", bbox_inches = "tight")
                 st.image(buf)
-
-        # # Display statistic tables for degree centrality
-        # st.markdown('<p class="big-font">Degree centrality</p>', unsafe_allow_html=True)
-        # data_container = st.container()
-        # with data_container:
-        #     table, plot, _ , _ = st.columns(4)
-        #     with table:
-        #         st.table(data=style_table(dgr_centr))
-        #     with plot:
-        #         buf = BytesIO()
-        #         fig, ax = plt.subplots()
-        #         sns.barplot(data = dgr_centr, y = 'Subtype', x = 'centrality' , palette = cluster_colors, ax = ax)
-        #         ax.tick_params(labelsize=14)
-        #         ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
-        #         ax.set_xlabel('Centrality score',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
-        #         fig.savefig(buf, format="png", bbox_inches = "tight")
-        #         st.image(buf)
     
     if prognosis_button and st.session_state.slide:
 
@@ -201,3 +186,22 @@ def app():
 
     if clear_button:
         clear(path)
+
+
+
+        # # Display statistic tables for degree centrality
+        # st.markdown('<p class="big-font">Degree centrality</p>', unsafe_allow_html=True)
+        # data_container = st.container()
+        # with data_container:
+        #     table, plot, _ , _ = st.columns(4)
+        #     with table:
+        #         st.table(data=style_table(dgr_centr))
+        #     with plot:
+        #         buf = BytesIO()
+        #         fig, ax = plt.subplots()
+        #         sns.barplot(data = dgr_centr, y = 'Subtype', x = 'centrality' , palette = cluster_colors, ax = ax)
+        #         ax.tick_params(labelsize=14)
+        #         ax.set_ylabel('', fontdict= {'fontsize': 16, 'fontweight':'bold'})
+        #         ax.set_xlabel('Centrality score',fontdict= { 'fontsize': 16, 'fontweight':'bold'})
+        #         fig.savefig(buf, format="png", bbox_inches = "tight")
+        #         st.image(buf)
