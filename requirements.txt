@@ -5,6 +5,7 @@ Pillow == 9.0.1
 streamlit == 1.12.0
 streamlit-authenticator == 0.2.1
 streamlit-drawable-canvas == 0.9.1
+altair<5
 openslide-python == 1.2.0
 PyYAML == 6.0
 scikit-image == 0.19.3
@@ -17,4 +18,5 @@ glob2 == 0.7
 torchvision == 0.13.0
 scanpy == 1.9.1
 squidpy == 1.2.3
+pyvips
 
