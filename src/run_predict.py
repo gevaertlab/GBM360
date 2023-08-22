@@ -13,11 +13,8 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import json
 import pyvips
-from ga import inject_ga
 
 def app():
-
-    inject_ga()
 
     with open("config/config.json", 'r') as f:
         config = json.load(f)

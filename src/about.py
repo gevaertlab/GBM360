@@ -3,13 +3,10 @@ The main page of GBM360
 """
 
 import streamlit as st
-from ga import inject_ga
 import base64
 
 
 def app():
-
-    inject_ga()
 
     with st.container():
         st.markdown('<p class="big-font"> GBM360 is a software that harnesses the power of machine learning to investigate the cellular heterogeneity and spatial architecture of glioblastoma </p>', unsafe_allow_html=True)

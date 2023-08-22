@@ -30,6 +30,8 @@ def inject_ga():
     """
 
     # Insert the script in the head tag of the static template inside your virtual
+    #index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+
     index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
     logging.info(f'editing {index_path}')
     soup = BeautifulSoup(index_path.read_text(), features="html.parser")

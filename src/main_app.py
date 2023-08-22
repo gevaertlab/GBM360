@@ -10,6 +10,7 @@ import auth
 import about
 import re
 import base64
+from ga import inject_ga
 import pdb
 
 st.set_page_config(layout="wide")
@@ -31,6 +32,8 @@ button[data-baseweb="tab"] {
 """, unsafe_allow_html=True)
 
 st.image("pictures/logo.png", width = 150)
+
+inject_ga()
 
 tab1, tab2, tab3 = st.tabs(["About", "Tutorial", "Run"])
 
