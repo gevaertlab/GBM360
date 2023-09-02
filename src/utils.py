@@ -2,18 +2,15 @@
 General utility functions
 """
 
+print("utils")
 import os
 import torch
 import numpy as np
-from torchvision import transforms
-from torch.utils.data import DataLoader, SequentialSampler, DataLoader
 from stqdm import stqdm
 import seaborn as sns
 
 from resnet import resnet50
 from pathology_models import AggregationModel, Identity, TanhAttention
-from get_patch_img import extract_patches
-from dataset import PatchDataset
 from pathlib import Path
 
 def get_class():
@@ -65,7 +62,6 @@ def load_model(checkpoint: str, config=None):
     model.load_state_dict(torch.load(checkpoint, map_location=torch.device('cpu')))
     
     return model
-
 
 def predict_cell(model, val_dataloader, device='cpu'):
     
@@ -123,21 +119,6 @@ def predict_survival(model, val_dataloader, device='cpu'):
         results['risk_score'].append(output_list)
     
     return results
-
-
-def read_patches(slide, max_patches_per_slide = np.inf):
-    patches, coordinates = extract_patches(slide, patch_size=(112,112), max_patches_per_slide=max_patches_per_slide)
-    data_transforms = transforms.Compose([
-        transforms.Resize(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
-    dataset = PatchDataset(patches, coordinates, data_transforms)
-    image_samplers = SequentialSampler(dataset)
-    
-    # Create training and validation dataloaders
-    dataloader = DataLoader(dataset, batch_size=64, sampler=image_samplers)
-    return dataloader
 
 def save_uploaded_file(uploaded_file):
     with open(os.path.join("temp",uploaded_file.name),"wb") as f:
