@@ -2,7 +2,6 @@
 The run prediction page
 """
 
-print("run_predict")
 import numpy as np
 from PIL import Image
 import streamlit as st
@@ -21,6 +20,8 @@ def app():
 
     with open("config/config.json", 'r') as f:
         config = json.load(f)
+
+    clear_dir('temp')
 
     # Specify canvas parameters in application
     bg_image = st.file_uploader("Image:", type=["tiff", 'tif', "svs"])
