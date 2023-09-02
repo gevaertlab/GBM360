@@ -1,6 +1,8 @@
 """
 The run prediction page
 """
+
+print("run_predict")
 import numpy as np
 from PIL import Image
 import streamlit as st
@@ -8,6 +10,7 @@ from openslide import OpenSlide
 from utils import *
 from spa_mapping import generate_heatmap_cell_type, generate_heatpmap_survival
 from spatial_stat import gen_graph, compute_percent
+from get_patch_img import read_patches
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -42,16 +45,20 @@ def app():
         st.session_state.slide = None
     if 'image' not in st.session_state:
         st.session_state.image = None
+    if 'image_type' not in st.session_state:
+        st.session_state.image_type = None
     if 'dataloader' not in st.session_state:
         st.session_state.dataloader = None
 
     if bg_image:
         path = save_uploaded_file(bg_image)
+        st.session_state.image_type = "svs"
 
         if path.endswith("tiff") or path.endswith("tif"):
             image = pyvips.Image.new_from_file(path)
             image.write_to_file("temp/test.tiff", pyramid=True, tile=True)
             path = "temp/test.tiff"
+            st.session_state.image_type = "tif"
 
         st.session_state.slide = OpenSlide(path)
         st.session_state.image = st.session_state.slide.get_thumbnail(size=(512,512))
@@ -71,7 +78,7 @@ def app():
     if cell_type_button and st.session_state.slide:
         slide = st.session_state.slide
         with st.spinner('Reading patches...'):
-            dataloader = read_patches(slide, max_patches_per_slide)
+            dataloader = read_patches(slide, max_patches_per_slide, image_type = st.session_state.image_type)
 
         with st.spinner('Loading model...'):
             model = load_model(checkpoint='model_weights/train_2023-04-28_prob_multi_label_weighted/model_cell.pt', config = config)

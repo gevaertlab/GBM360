@@ -1,6 +1,8 @@
 """
 Utility functions to isolate foreground from background and to extract patches
 """
+
+print("get_patch")
 import numpy as np
 from skimage.color import rgb2hsv
 from skimage.filters import threshold_otsu
@@ -8,8 +10,29 @@ from skimage.exposure.exposure import is_low_contrast
 from skimage.transform import resize
 from scipy.ndimage.morphology import binary_dilation, binary_erosion
 from stqdm import stqdm
+from torchvision import transforms
+from torch.utils.data import DataLoader, SequentialSampler, DataLoader
+from dataset import PatchDataset
 
-def get_mask_image(img_RGB, RGB_min=50):
+def read_patches(slide, max_patches_per_slide = np.inf, image_type = 'svs'):
+    patches, coordinates = extract_patches(slide, patch_size=(112,112), \
+                                           max_patches_per_slide=max_patches_per_slide, \
+                                           image_type = image_type)
+
+    data_transforms = transforms.Compose([
+        transforms.Resize(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+    dataset = PatchDataset(patches, coordinates, data_transforms)
+    image_samplers = SequentialSampler(dataset)
+    
+    # Create training and validation dataloaders
+    dataloader = DataLoader(dataset, batch_size=64, sampler=image_samplers)
+    return dataloader
+
+def get_mask_image(img_RGB, RGB_min=50, image_type = 'svs'):
+
     img_HSV = rgb2hsv(img_RGB)
 
     background_R = img_RGB[:, :, 0] > threshold_otsu(img_RGB[:, :, 0])
@@ -21,10 +44,13 @@ def get_mask_image(img_RGB, RGB_min=50):
     min_G = img_RGB[:, :, 1] > RGB_min
     min_B = img_RGB[:, :, 2] > RGB_min
 
-    mask = tissue_S & tissue_RGB & min_R & min_G & min_B
+    if image_type == "svs":
+        mask = tissue_S & tissue_RGB & min_R & min_G & min_B
+    else:
+        mask = min_R & min_G & min_B
     return mask
 
-def get_mask(slide, level='max', RGB_min=50):
+def get_mask(slide, level='max', RGB_min=50, image_type = 'svs'):
     #read svs image at a certain level  and compute the otsu mask
     if level == 'max':
         level = len(slide.level_dimensions) - 1
@@ -32,12 +58,11 @@ def get_mask(slide, level='max', RGB_min=50):
     img_RGB = np.transpose(np.array(slide.read_region((0, 0),level,slide.level_dimensions[level]).convert('RGB')),
                            axes=[1, 0, 2])
 
-    tissue_mask = get_mask_image(img_RGB, RGB_min)
+    tissue_mask = get_mask_image(img_RGB, RGB_min, image_type = image_type)
     return tissue_mask, level
 
-
-def extract_patches(slide, patch_size, max_patches_per_slide=2000, dezoom_factor=1.0):
-    mask, mask_level = get_mask(slide)
+def extract_patches(slide, patch_size, max_patches_per_slide=2000, dezoom_factor=1.0, image_type = 'svs'):
+    mask, mask_level = get_mask(slide, image_type = image_type)
     mask = binary_dilation(mask, iterations=3)
     mask = binary_erosion(mask, iterations=3)
 

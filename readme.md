@@ -15,6 +15,9 @@ The software is written with [Streamlit](https://streamlit.io/) (V 1.12). Softwa
 
 <br/>
 
+## Reference / Citation ##
+Zheng, Y., Carrillo-Perez, F., Pizurica, M. et al. Spatial cellular architecture predicts prognosis in glioblastoma. Nat Commun 14, 4122 (2023). https://doi.org/10.1038/s41467-023-39933-0
+
 ## Installation ##
 
 This repository contains the source code of GBM360 for demonstration purpose only. 

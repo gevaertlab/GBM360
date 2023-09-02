@@ -2,6 +2,7 @@
 Landing point of GBM360
 """
 
+print("main_app")
 import streamlit as st
 import os
 from utils import *
@@ -11,7 +12,6 @@ import about
 import re
 import base64
 from ga import inject_ga
-import pdb
 
 st.set_page_config(layout="wide")
 st.markdown("""
@@ -38,7 +38,6 @@ inject_ga()
 tab1, tab2, tab3 = st.tabs(["About", "Tutorial", "Run"])
 
 with tab1:
-
     about.app()
 
 with tab2:
