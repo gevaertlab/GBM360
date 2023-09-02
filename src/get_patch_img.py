@@ -2,7 +2,6 @@
 Utility functions to isolate foreground from background and to extract patches
 """
 
-print("get_patch")
 import numpy as np
 from skimage.color import rgb2hsv
 from skimage.filters import threshold_otsu

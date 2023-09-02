@@ -2,7 +2,6 @@
 General utility functions
 """
 
-print("utils")
 import os
 import torch
 import numpy as np
@@ -128,6 +127,15 @@ def save_uploaded_file(uploaded_file):
 def clear(file):
     os.remove(file)
 
+def clear_dir(directory_path):
+    # List all files in the directory
+    file_list = os.listdir(directory_path)
+
+    # Iterate through the files and remove them
+    for filename in file_list:
+        file_path = os.path.join(directory_path, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
 def style_table(df):
     # style

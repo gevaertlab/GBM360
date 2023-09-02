@@ -2,7 +2,6 @@
 Landing point of GBM360
 """
 
-print("main_app")
 import streamlit as st
 import os
 from utils import *
@@ -83,7 +82,6 @@ with tab2:
 with tab3:
     if not os.path.exists('temp'):
         os.mkdir('temp')
-
     run_predict.app()
         
 
