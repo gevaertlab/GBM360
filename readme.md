@@ -95,6 +95,10 @@ Blue indicates low aggressiveness, while Red indicates high aggressiveness
 <img src="pictures/screenshot_agg.png" width = "70%" height = "70%">
 
 
+## Preprocessing codes ##
+
+1. Run `inferCNV.py` to infer copy number variation based on transcriptomics profiles. 
+2. Run `tumor_frac.py` to infer tumor cell fraction for each spot based on the CNV profiles. 
 
 
 
