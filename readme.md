@@ -97,16 +97,11 @@ Blue indicates low aggressiveness, while Red indicates high aggressiveness
 
 ## Preprocessing codes ##
 
-1. Run `inferCNV.py` to infer copy number variation based on transcriptomics profiles. 
-2. Run `tumor_frac.py` to infer tumor cell fraction for each spot based on the CNV profiles. 
+Data from 10X Genomics were first converted into Seurat or AnnData object using the Seurat or Scanpy package. 
 
-
-
-
-
-
-
-
+1. Quality control and data integration were performed using the Seurat package: `quality_control.R`.
+2. Run `inferCNV.py` to infer copy number variation using transcriptomics profiles. 
+3. Run `tumor_frac.py` to infer tumor cell fraction for each spot based on the CNV profiles. 
 
 
 
